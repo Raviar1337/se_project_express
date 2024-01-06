@@ -5,7 +5,7 @@ const {
   deleteClothingItem,
   likeClothingItem,
   unlikeClothingItem,
-} = require("../controllers/clothingItems.js");
+} = require("../controllers/clothingItems");
 
 // const testObject = { name: "bobete" };
 // res.send(testObject);

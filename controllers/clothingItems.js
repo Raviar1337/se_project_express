@@ -1,6 +1,6 @@
-const ClothingItem = require("../models/clothingItem.js");
+const ClothingItem = require("../models/clothingItem");
 
-const { BAD_REQUEST, NOT_FOUND, DEFAULT } = require("../utils/errors.js");
+const { BAD_REQUEST, NOT_FOUND, DEFAULT } = require("../utils/errors");
 
 const createClothingItems = (req, res) => {
   console.log({ message: "Create an item" });
@@ -35,8 +35,8 @@ const getClothingItems = (req, res) => {
 
 const deleteClothingItem = (req, res) => {
   console.log({ message: "delete item by ID" });
-  console.log(req.params.id);
-  ClothingItem.findByIdAndDelete(req.params.id)
+  console.log(req.params.itemId);
+  ClothingItem.findByIdAndDelete(req.params.itemId)
     .orFail(() => {
       const error = new Error("Item not found");
       error.statusCode = NOT_FOUND;
@@ -61,9 +61,9 @@ const deleteClothingItem = (req, res) => {
 
 const likeClothingItem = (req, res) => {
   console.log({ message: "like item by ID" });
-  console.log(req.params.id);
+  console.log(req.params.itemId);
   ClothingItem.findByIdAndUpdate(
-    req.params.id,
+    req.params.itemId,
     { $addToSet: { likes: req.user._id } }, // add _id to the array if it's not there yet
     { new: true },
   )
@@ -91,9 +91,9 @@ const likeClothingItem = (req, res) => {
 
 const unlikeClothingItem = (req, res) => {
   console.log({ message: "unlike item by ID" });
-  console.log(req.params.id);
+  console.log(req.params.itemId);
   ClothingItem.findByIdAndUpdate(
-    req.params.id,
+    req.params.itemId,
     { $pull: { likes: req.user._id } }, // remove _id to the array if it's there
     { new: true },
   )

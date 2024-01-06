@@ -1,6 +1,6 @@
-const User = require("../models/user.js");
+const User = require("../models/user");
 
-const { BAD_REQUEST, NOT_FOUND, DEFAULT } = require("../utils/errors.js");
+const { BAD_REQUEST, NOT_FOUND, DEFAULT } = require("../utils/errors");
 
 const createUser = (req, res) => {
   console.log(req);
@@ -25,8 +25,8 @@ const createUser = (req, res) => {
 
 const getUser = (req, res) => {
   console.log({ message: "1 user by id" });
-  console.log(req.params.id);
-  User.findById(req.params.id)
+  console.log(req.params.userId);
+  User.findById(req.params.userId)
     .orFail(() => {
       const error = new Error("User not found");
       error.statusCode = NOT_FOUND;
@@ -39,6 +39,8 @@ const getUser = (req, res) => {
         res
           .status(NOT_FOUND)
           .send({ message: `Error ${err.statusCode} user not found` });
+      } else if (err.name === "CastError") {
+        res.status(BAD_REQUEST).send({ message: "Invalid Params or ID" });
       } else {
         res.status(DEFAULT).send({ message: "Uncaught Error in getUser" });
       }
