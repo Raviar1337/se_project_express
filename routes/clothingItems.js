@@ -14,10 +14,10 @@ router.post("/", createClothingItems);
 
 router.get("/", getClothingItems);
 
-router.put("/id/likes", likeClothingItem);
+router.put("/:itemId/likes", likeClothingItem);
 
-router.delete("/id/likes", unlikeClothingItem);
+router.delete("/:itemId/likes", unlikeClothingItem);
 
-router.delete("/id", deleteClothingItem);
+router.delete("/:itemId", deleteClothingItem);
 
 module.exports = router;

@@ -1,5 +1,7 @@
 const ClothingItem = require("../models/clothingItem.js");
 
+const { BAD_REQUEST, NOT_FOUND, DEFAULT } = require("../utils/errors.js");
+
 const createClothingItems = (req, res) => {
   console.log({ message: "Create an item" });
   console.log(req.body);
@@ -11,10 +13,12 @@ const createClothingItems = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        res.status(400).send({ message: ` Invalid Input ` });
+        res.status(BAD_REQUEST).send({ message: ` Invalid Input ` });
+      } else if (err.name === "CastError") {
+        res.status(BAD_REQUEST).send({ message: "Invalid Params or ID" });
       } else {
         res
-          .status(500)
+          .status(DEFAULT)
           .send({ message: ` Uncaughtr error in createClothingItems` });
       }
     });
@@ -25,27 +29,31 @@ const getClothingItems = (req, res) => {
   ClothingItem.find({})
     .then((clothingItems) => res.send({ data: clothingItems }))
     .catch(() =>
-      res.status(500).send({ message: "Error in getClothingItems" }),
+      res.status(DEFAULT).send({ message: "Error in getClothingItems" }),
     );
 };
 
 const deleteClothingItem = (req, res) => {
   console.log({ message: "delete item by ID" });
-  console.log(req.query.id);
-  ClothingItem.findByIdAndDelete(req.query.id)
+  console.log(req.params.id);
+  ClothingItem.findByIdAndDelete(req.params.id)
     .orFail(() => {
       const error = new Error("Item not found");
-      error.statusCode = 404;
+      error.statusCode = NOT_FOUND;
       throw error;
     })
     .then((item) => res.send({ data: item }))
     .catch((err) => {
       console.error(err);
-      if (err.statusCode === 404) {
-        res.send({ message: `Error ${err.statusCode} item not found` });
+      if (err.statusCode === NOT_FOUND) {
+        res
+          .status(NOT_FOUND)
+          .send({ message: `Error ${err.statusCode} item not found` });
+      } else if (err.name === "CastError") {
+        res.status(BAD_REQUEST).send({ message: "Invalid Params or ID" });
       } else {
         res
-          .status(500)
+          .status(DEFAULT)
           .send({ message: "Uncaught Error in deleteClothing item" });
       }
     });
@@ -53,49 +61,59 @@ const deleteClothingItem = (req, res) => {
 
 const likeClothingItem = (req, res) => {
   console.log({ message: "like item by ID" });
-  console.log(req.query.id);
+  console.log(req.params.id);
   ClothingItem.findByIdAndUpdate(
-    req.query.id,
+    req.params.id,
     { $addToSet: { likes: req.user._id } }, // add _id to the array if it's not there yet
     { new: true },
   )
     .orFail(() => {
       const error = new Error("Item not found");
-      error.statusCode = 404;
+      error.statusCode = NOT_FOUND;
       throw error;
     })
     .then((item) => res.send({ data: item }))
     .catch((err) => {
       console.error(err);
-      if (err.statusCode === 404) {
-        res.send({ message: `Error ${err.statusCode} item not found` });
+      if (err.statusCode === NOT_FOUND) {
+        res
+          .status(NOT_FOUND)
+          .send({ message: `Error ${err.statusCode} item not found` });
+      } else if (err.name === "CastError") {
+        res.status(BAD_REQUEST).send({ message: "Invalid Params or ID" });
       } else {
-        res.status(500).send({ message: "Uncaught Error in likeClothingItem" });
+        res
+          .status(DEFAULT)
+          .send({ message: "Uncaught Error in likeClothingItem" });
       }
     });
 };
 
 const unlikeClothingItem = (req, res) => {
   console.log({ message: "unlike item by ID" });
-  console.log(req.query.id);
+  console.log(req.params.id);
   ClothingItem.findByIdAndUpdate(
-    req.query.id,
+    req.params.id,
     { $pull: { likes: req.user._id } }, // remove _id to the array if it's there
     { new: true },
   )
     .orFail(() => {
       const error = new Error("Item not found");
-      error.statusCode = 404;
+      error.statusCode = NOT_FOUND;
       throw error;
     })
     .then((item) => res.send({ data: item }))
     .catch((err) => {
       console.error(err);
-      if (err.statusCode === 404) {
-        res.send({ message: `Error ${err.statusCode} item not found` });
+      if (err.statusCode === NOT_FOUND) {
+        res
+          .status(NOT_FOUND)
+          .send({ message: `Error ${err.statusCode} item not found` });
+      } else if (err.name === "CastError") {
+        res.status(BAD_REQUEST).send({ message: "Invalid Params or ID" });
       } else {
         res
-          .status(500)
+          .status(DEFAULT)
           .send({ message: "Uncaught Error in unlikeClothingItem" });
       }
     });

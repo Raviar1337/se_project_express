@@ -1,5 +1,6 @@
 const User = require("../models/user.js");
-const { defaultServerError } = require("../utils/errors.js");
+
+const { BAD_REQUEST, NOT_FOUND, DEFAULT } = require("../utils/errors.js");
 
 const createUser = (req, res) => {
   console.log(req);
@@ -15,38 +16,41 @@ const createUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        res.status(400).send({ message: ` Invalid Input ` });
+        res.status(BAD_REQUEST).send({ message: ` Invalid Input ` });
       } else {
-        res.status(500).send({ message: ` Uncaughtr error in createUser` });
+        res.status(DEFAULT).send({ message: ` Uncaughtr error in createUser` });
       }
     });
 };
 
 const getUser = (req, res) => {
   console.log({ message: "1 user by id" });
-  console.log(req.query.id);
-  User.findById(req.query.id)
+  console.log(req.params.id);
+  User.findById(req.params.id)
     .orFail(() => {
       const error = new Error("User not found");
-      error.statusCode = 404;
+      error.statusCode = NOT_FOUND;
       throw error;
     })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       console.error(err);
-      if (err.statusCode === 404) {
-        res.send({ message: `Error ${err.statusCode} user not found` });
+      if (err.statusCode === NOT_FOUND) {
+        res
+          .status(NOT_FOUND)
+          .send({ message: `Error ${err.statusCode} user not found` });
       } else {
-        res.status(500).send({ message: "Uncaught Error in getUser" });
+        res.status(DEFAULT).send({ message: "Uncaught Error in getUser" });
       }
     });
 };
 
 const getUsers = (req, res) => {
   console.log({ message: "all Users" });
+  console.log(req);
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch(() => res.status(500).send({ message: "Error in getUsers" }));
+    .catch(() => res.status(DEFAULT).send({ message: "Error in getUsers" }));
 };
 
 module.exports = { getUser, getUsers, createUser };

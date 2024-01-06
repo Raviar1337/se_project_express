@@ -1,8 +1,5 @@
-const defaultServerError = () =>
-  res.status(500).send({ message: "An error has occurred on the server." });
+const BAD_REQUEST = 400;
+const NOT_FOUND = 404;
+const DEFAULT = 500;
 
-const userNotFoundError = () => {};
-
-const invalidInputError = () => {};
-
-module.exports = { defaultServerError, invalidInputError };
+module.exports = { BAD_REQUEST, NOT_FOUND, DEFAULT };

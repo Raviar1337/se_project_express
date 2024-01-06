@@ -6,7 +6,7 @@ const { getUsers, getUser, createUser } = require("../controllers/users");
 
 router.post("/", createUser);
 
-router.get("/id", getUser);
+router.get("/:userId", getUser);
 
 router.get("/", getUsers);
 
