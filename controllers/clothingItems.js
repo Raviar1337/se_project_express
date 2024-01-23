@@ -4,7 +4,7 @@ const {
   BAD_REQUEST,
   NOT_FOUND,
   DEFAULT,
-  AUTHORIZATION_FAILURE,
+  FORBIDDEN,
 } = require("../utils/errors");
 
 const createClothingItems = (req, res) => {
@@ -52,8 +52,8 @@ const deleteClothingItem = (req, res) => {
       throw error;
     })
     .then((item) => {
-      if (item.owner !== _id) {
-        res.status(AUTHORIZATION_FAILURE).send({
+      if (String(item.owner) !== _id) {
+        res.status(FORBIDDEN).send({
           message: "Unauthorized: You can only delete your own items",
         });
       } else {
@@ -63,7 +63,7 @@ const deleteClothingItem = (req, res) => {
             error.statusCode = NOT_FOUND;
             throw error;
           })
-          .then((item) => res.send({ data: item }))
+          .then((clothing) => res.send({ data: clothing }))
           .catch((err) => {
             console.error(err);
             if (err.statusCode === NOT_FOUND) {
@@ -78,6 +78,20 @@ const deleteClothingItem = (req, res) => {
                 .send({ message: "Uncaught Error in deleteClothing item" });
             }
           });
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      if (err.statusCode === NOT_FOUND) {
+        res
+          .status(NOT_FOUND)
+          .send({ message: `Error ${err.statusCode} item not found` });
+      } else if (err.name === "CastError") {
+        res.status(BAD_REQUEST).send({ message: "Invalid Params or ID" });
+      } else {
+        res
+          .status(DEFAULT)
+          .send({ message: "Uncaught Error in deleteClothing item" });
       }
     });
 };

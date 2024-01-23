@@ -6,9 +6,9 @@ const { getCurrentUser, patchCurrentUser } = require("../controllers/users");
 
 // router.post("/", createUser);
 
-router.get("/me/:userId", getCurrentUser);
+router.get("/me", getCurrentUser);
 
-router.patch("/me/:userId", patchCurrentUser);
+router.patch("/me", patchCurrentUser);
 
 // router.get("/", getUsers);
 

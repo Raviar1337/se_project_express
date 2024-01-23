@@ -11,6 +11,7 @@ const {
   NOT_FOUND,
   DEFAULT,
   AUTHORIZATION_FAILURE,
+  DUPLICATE_USER,
 } = require("../utils/errors");
 
 const createUser = (req, res) => {
@@ -27,14 +28,16 @@ const createUser = (req, res) => {
 
     .then((user) => {
       console.log(user);
-      res.send({ data: user });
+      res.send({ data: user.email });
     })
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
         res.status(BAD_REQUEST).send({ message: ` Invalid Input ` });
       } else if (err.name === "MongoServerError") {
-        res.status(BAD_REQUEST).send({ message: ` This user already exists ` });
+        res
+          .status(DUPLICATE_USER)
+          .send({ message: ` This user already exists ` });
       } else {
         res.status(DEFAULT).send({ message: ` Uncaughtr error in createUser` });
       }
@@ -43,8 +46,8 @@ const createUser = (req, res) => {
 
 const getCurrentUser = (req, res) => {
   console.log({ message: "1 user by id" });
-  console.log(req.params.userId);
-  User.findById(req.params.userId)
+  console.log(req.user._id);
+  User.findById(req.user._id)
     .orFail(() => {
       const error = new Error("User not found");
       error.statusCode = NOT_FOUND;
@@ -73,7 +76,11 @@ const patchCurrentUser = (req, res) => {
 
   const { name, avatar } = req.body;
 
-  User.findByIdAndUpdate(req.params.userId, { name }, { avatar })
+  User.findByIdAndUpdate(
+    req.user._id,
+    { name, avatar },
+    { new: true, runValidators: true },
+  )
     .orFail(() => {
       const error = new Error("User not found");
       error.statusCode = NOT_FOUND;
@@ -88,6 +95,8 @@ const patchCurrentUser = (req, res) => {
           .send({ message: `Error ${err.statusCode} user not found` });
       } else if (err.name === "CastError") {
         res.status(BAD_REQUEST).send({ message: "Invalid Params or ID" });
+      } else if (err.name === "ValidationError") {
+        res.status(BAD_REQUEST).send({ message: ` Invalid Input ` });
       } else {
         res
           .status(DEFAULT)
@@ -96,13 +105,14 @@ const patchCurrentUser = (req, res) => {
     });
 };
 
-const getUsers = (req, res) => {
-  console.log({ message: "all Users" });
-  console.log(req);
-  User.find({})
-    .then((users) => res.send({ data: users }))
-    .catch(() => res.status(DEFAULT).send({ message: "Error in getUsers" }));
-};
+// deleted code left up for study
+// const getUsers = (req, res) => {
+//   console.log({ message: "all Users" });
+//   console.log(req);
+//   User.find({})
+//     .then((users) => res.send({ data: users }))
+//     .catch(() => res.status(DEFAULT).send({ message: "Error in getUsers" }));
+// };
 
 const login = (req, res) => {
   console.log({ message: "Login request" });
@@ -115,7 +125,7 @@ const login = (req, res) => {
         expiresIn: "7d",
       });
 
-      res.send(token);
+      res.send({ token });
     })
     .catch((err) => {
       res.status(AUTHORIZATION_FAILURE).send({ message: err.message });
@@ -124,7 +134,7 @@ const login = (req, res) => {
 
 module.exports = {
   getCurrentUser,
-  getUsers,
+
   createUser,
   login,
   patchCurrentUser,

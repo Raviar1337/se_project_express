@@ -4,14 +4,14 @@ const jwt = require("jsonwebtoken");
 
 const { JWT_SECRET } = require("../utils/config");
 
-const { LOGIN_FAILURE } = require("../utils/errors");
+const { AUTHORIZATION_FAILURE } = require("../utils/errors");
 
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith("Bearer ")) {
     return res
-      .status(LOGIN_FAILURE)
+      .status(AUTHORIZATION_FAILURE)
       .send({ message: "Authorization Required" });
   }
 
@@ -22,11 +22,11 @@ module.exports = (req, res, next) => {
     payload = jwt.verify(token, JWT_SECRET);
   } catch (err) {
     return res
-      .status(LOGIN_FAILURE)
+      .status(AUTHORIZATION_FAILURE)
       .send({ message: "Authorization Required" });
   }
 
   req.user = payload;
 
-  next();
+  return next();
 };
