@@ -1,8 +1,48 @@
-const BAD_REQUEST = 400;
-const AUTHORIZATION_FAILURE = 401;
-const FORBIDDEN = 403;
-const NOT_FOUND = 404;
-const DUPLICATE_USER = 409;
+//const BAD_REQUEST = 400;
+
+class BAD_REQUEST extends Error {
+  constructor(message) {
+    super(message);
+    this.statusCode = 400;
+  }
+}
+
+//const AUTHORIZATION_FAILURE = 401;
+
+class AUTHORIZATION_FAILURE extends Error {
+  constructor(message) {
+    super(message);
+    this.statusCode = 401;
+  }
+}
+
+//const FORBIDDEN = 403;
+
+class FORBIDDEN extends Error {
+  constructor(message) {
+    super(message);
+    this.statusCode = 403;
+  }
+}
+
+//const NOT_FOUND = 404;
+
+class NOT_FOUND extends Error {
+  constructor(message) {
+    super(message);
+    this.statusCode = 404;
+  }
+}
+
+//const DUPLICATE_USER = 409;
+
+class DUPLICATE_USER extends Error {
+  constructor(message) {
+    super(message);
+    this.statusCode = 409;
+  }
+}
+
 const DEFAULT = 500;
 
 module.exports = {
@@ -13,3 +53,12 @@ module.exports = {
   AUTHORIZATION_FAILURE,
   FORBIDDEN,
 };
+
+// class NotFoundError extends Error {
+//   constructor(message) {
+//     super(message);
+//     this.statusCode = 404;
+//   }
+// }
+
+// module.exports = NotFoundError;

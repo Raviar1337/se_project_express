@@ -18,13 +18,17 @@ const createClothingItems = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        res.status(BAD_REQUEST).send({ message: ` Invalid Input ` });
+        const error = new BAD_REQUEST(` Invalid Input `);
+
+        throw error;
       } else if (err.name === "CastError") {
-        res.status(BAD_REQUEST).send({ message: "Invalid Params or ID" });
+        const error = new BAD_REQUEST("Invalid Params or ID");
+
+        throw error;
       } else {
-        res
-          .status(DEFAULT)
-          .send({ message: ` Uncaughtr error in createClothingItems` });
+        const error = new Error("Something Went Wrong");
+
+        throw error;
       }
     });
 };
@@ -47,57 +51,70 @@ const deleteClothingItem = (req, res) => {
 
   ClothingItem.findById(req.params.itemId)
     .orFail(() => {
-      const error = new Error("Item not found");
-      error.statusCode = NOT_FOUND;
+      const error = new NOT_FOUND("Item not found");
+
       throw error;
     })
     .then((item) => {
       if (String(item.owner) !== _id) {
-        res.status(FORBIDDEN).send({
-          message: "Unauthorized: You can only delete your own items",
-        });
+        const error = new FORBIDDEN(
+          "Unauthorized: You can only delete your own items",
+        );
+
+        throw error;
       } else {
         ClothingItem.findByIdAndDelete(req.params.itemId)
           .orFail(() => {
-            const error = new Error("Item not found");
-            error.statusCode = NOT_FOUND;
+            const error = new NOT_FOUND("Item not found");
+
             throw error;
           })
           .then((clothing) => res.send({ data: clothing }))
           .catch((err) => {
             console.error(err);
-            if (err.statusCode === NOT_FOUND) {
-              res
-                .status(NOT_FOUND)
-                .send({ message: `Error ${err.statusCode} item not found` });
-            } else if (err.name === "CastError") {
-              res.status(BAD_REQUEST).send({ message: "Invalid Params or ID" });
+            // if (err.statusCode === NOT_FOUND) {
+            //   res
+            //     .status(NOT_FOUND)
+            //     .send({ message: `Error ${err.statusCode} item not found` });
+            // } else if (err.name === "CastError") {
+            //   res.status(BAD_REQUEST).send({ message: "Invalid Params or ID" });
+            // } else {
+            //   res
+            //     .status(DEFAULT)
+            //     .send({ message: "Uncaught Error in deleteClothing item" });
+            // }
+            if (err.name === "CastError") {
+              next(new BAD_REQUEST("Invalid Params or ID"));
             } else {
-              res
-                .status(DEFAULT)
-                .send({ message: "Uncaught Error in deleteClothing item" });
+              next(err);
             }
           });
       }
     })
     .catch((err) => {
       console.error(err);
-      if (err.statusCode === NOT_FOUND) {
-        res
-          .status(NOT_FOUND)
-          .send({ message: `Error ${err.statusCode} item not found` });
-      } else if (err.name === "CastError") {
-        res.status(BAD_REQUEST).send({ message: "Invalid Params or ID" });
+      // if (err.statusCode === NOT_FOUND) {
+      //   res
+      //     .status(NOT_FOUND)
+      //     .send({ message: `Error ${err.statusCode} item not found` });
+      // } else if (err.name === "CastError") {
+      //   res.status(BAD_REQUEST).send({ message: "Invalid Params or ID" });
+      // } else {
+      //   res
+      //     .status(DEFAULT)
+      //     .send({ message: "Uncaught Error in deleteClothing item" });
+      // }
+      if (err.name === "CastError") {
+        next(new BAD_REQUEST("Invalid Params or ID"));
       } else {
-        res
-          .status(DEFAULT)
-          .send({ message: "Uncaught Error in deleteClothing item" });
+        next(err);
       }
     });
 };
 
 const likeClothingItem = (req, res) => {
   console.log({ message: "like item by ID" });
+  console.log(req.user._id);
   console.log(req.params.itemId);
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
@@ -105,23 +122,28 @@ const likeClothingItem = (req, res) => {
     { new: true },
   )
     .orFail(() => {
-      const error = new Error("Item not found");
-      error.statusCode = NOT_FOUND;
+      const error = new NOT_FOUND("Item not found");
+
       throw error;
     })
     .then((item) => res.send({ data: item }))
     .catch((err) => {
-      console.error(err);
-      if (err.statusCode === NOT_FOUND) {
-        res
-          .status(NOT_FOUND)
-          .send({ message: `Error ${err.statusCode} item not found` });
-      } else if (err.name === "CastError") {
-        res.status(BAD_REQUEST).send({ message: "Invalid Params or ID" });
+      // console.error(err);
+      // if (err.statusCode === NOT_FOUND) {
+      //   res
+      //     .status(NOT_FOUND)
+      //     .send({ message: `Error ${err.statusCode} item not found` });
+      // } else if (err.name === "CastError") {
+      //   res.status(BAD_REQUEST).send({ message: "Invalid Params or ID" });
+      // } else {
+      //   res
+      //     .status(DEFAULT)
+      //     .send({ message: "Uncaught Error in likeClothingItem" });
+      // }
+      if (err.name === "CastError") {
+        next(new BAD_REQUEST("Invalid Params or ID"));
       } else {
-        res
-          .status(DEFAULT)
-          .send({ message: "Uncaught Error in likeClothingItem" });
+        next(err);
       }
     });
 };
@@ -135,23 +157,28 @@ const unlikeClothingItem = (req, res) => {
     { new: true },
   )
     .orFail(() => {
-      const error = new Error("Item not found");
-      error.statusCode = NOT_FOUND;
+      const error = new NOT_FOUND("Item not found");
+
       throw error;
     })
     .then((item) => res.send({ data: item }))
     .catch((err) => {
-      console.error(err);
-      if (err.statusCode === NOT_FOUND) {
-        res
-          .status(NOT_FOUND)
-          .send({ message: `Error ${err.statusCode} item not found` });
-      } else if (err.name === "CastError") {
-        res.status(BAD_REQUEST).send({ message: "Invalid Params or ID" });
+      // console.error(err);
+      // if (err.statusCode === NOT_FOUND) {
+      //   res
+      //     .status(NOT_FOUND)
+      //     .send({ message: `Error ${err.statusCode} item not found` });
+      // } else if (err.name === "CastError") {
+      //   res.status(BAD_REQUEST).send({ message: "Invalid Params or ID" });
+      // } else {
+      //   res
+      //     .status(DEFAULT)
+      //     .send({ message: "Uncaught Error in unlikeClothingItem" });
+      // }
+      if (err.name === "CastError") {
+        next(new BAD_REQUEST("Invalid Params or ID"));
       } else {
-        res
-          .status(DEFAULT)
-          .send({ message: "Uncaught Error in unlikeClothingItem" });
+        next(err);
       }
     });
 };

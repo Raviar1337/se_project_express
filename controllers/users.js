@@ -31,16 +31,17 @@ const createUser = (req, res) => {
       res.send({ data: user.email });
     })
     .catch((err) => {
-      console.error(err);
-      if (err.name === "ValidationError") {
-        res.status(BAD_REQUEST).send({ message: ` Invalid Input ` });
-      } else if (err.name === "MongoServerError") {
-        res
-          .status(DUPLICATE_USER)
-          .send({ message: ` This user already exists ` });
-      } else {
-        res.status(DEFAULT).send({ message: ` Uncaughtr error in createUser` });
-      }
+      // console.error(err);
+      // if (err.name === "ValidationError") {
+      //   res.status(BAD_REQUEST).send({ message: ` Invalid Input ` });
+      // } else if (err.name === "MongoServerError") {
+      //   res
+      //     .status(DUPLICATE_USER)
+      //     .send({ message: ` This user already exists ` });
+      // } else {
+      //   res.status(DEFAULT).send({ message: ` Uncaughtr error in createUser` });
+      // }
+      next(err);
     });
 };
 
@@ -49,24 +50,25 @@ const getCurrentUser = (req, res) => {
   console.log(req.user._id);
   User.findById(req.user._id)
     .orFail(() => {
-      const error = new Error("User not found");
-      error.statusCode = NOT_FOUND;
+      const error = new NOT_FOUND("User not found");
+
       throw error;
     })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      console.error(err);
-      if (err.statusCode === NOT_FOUND) {
-        res
-          .status(NOT_FOUND)
-          .send({ message: `Error ${err.statusCode} user not found` });
-      } else if (err.name === "CastError") {
-        res.status(BAD_REQUEST).send({ message: "Invalid Params or ID" });
-      } else {
-        res
-          .status(DEFAULT)
-          .send({ message: "Uncaught Error in getCurrentUser" });
-      }
+      // console.error(err);
+      // if (err.statusCode === NOT_FOUND) {
+      //   res
+      //     .status(NOT_FOUND)
+      //     .send({ message: `Error ${err.statusCode} user not found` });
+      // } else if (err.name === "CastError") {
+      //   res.status(BAD_REQUEST).send({ message: "Invalid Params or ID" });
+      // } else {
+      //   res
+      //     .status(DEFAULT)
+      //     .send({ message: "Uncaught Error in getCurrentUser" });
+      // }
+      next(err);
     });
 };
 
@@ -82,26 +84,27 @@ const patchCurrentUser = (req, res) => {
     { new: true, runValidators: true },
   )
     .orFail(() => {
-      const error = new Error("User not found");
-      error.statusCode = NOT_FOUND;
+      const error = new NOT_FOUND("User not found");
+
       throw error;
     })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      console.error(err);
-      if (err.statusCode === NOT_FOUND) {
-        res
-          .status(NOT_FOUND)
-          .send({ message: `Error ${err.statusCode} user not found` });
-      } else if (err.name === "CastError") {
-        res.status(BAD_REQUEST).send({ message: "Invalid Params or ID" });
-      } else if (err.name === "ValidationError") {
-        res.status(BAD_REQUEST).send({ message: ` Invalid Input ` });
-      } else {
-        res
-          .status(DEFAULT)
-          .send({ message: "Uncaught Error in patchCurrentUser" });
-      }
+      // console.error(err);
+      // if (err.statusCode === NOT_FOUND) {
+      //   res
+      //     .status(NOT_FOUND)
+      //     .send({ message: `Error ${err.statusCode} user not found` });
+      // } else if (err.name === "CastError") {
+      //   res.status(BAD_REQUEST).send({ message: "Invalid Params or ID" });
+      // } else if (err.name === "ValidationError") {
+      //   res.status(BAD_REQUEST).send({ message: ` Invalid Input ` });
+      // } else {
+      //   res
+      //     .status(DEFAULT)
+      //     .send({ message: "Uncaught Error in patchCurrentUser" });
+      // }
+      next(err);
     });
 };
 
@@ -128,7 +131,11 @@ const login = (req, res) => {
       res.send({ token });
     })
     .catch((err) => {
-      res.status(AUTHORIZATION_FAILURE).send({ message: err.message });
+      // res.status(AUTHORIZATION_FAILURE).send({ message: err.message });
+      // const error = new AUTHORIZATION_FAILURE("Invalid Username or Password");
+
+      //   throw error;
+      next(err);
     });
 };
 

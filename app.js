@@ -4,6 +4,12 @@ const mongoose = require("mongoose");
 
 const cors = require("cors");
 
+const { requestLogger, errorLogger } = require("./middlewares/logger");
+
+const { errorHandler } = require("./middlewares/error-handler");
+
+const { errors } = require("celebrate");
+
 const { PORT = 3001 } = process.env;
 const app = express();
 
@@ -18,8 +24,13 @@ app.use(express.json());
 //   };
 //   next();
 // });
-
+app.use(requestLogger);
 app.use(routes);
+app.use(errorLogger);
+
+app.use(errors());
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`App listening at port ${PORT}`);
