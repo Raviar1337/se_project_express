@@ -4,11 +4,11 @@ const mongoose = require("mongoose");
 
 const cors = require("cors");
 
+const { errors } = require("celebrate");
+
 const { requestLogger, errorLogger } = require("./middlewares/logger");
 
 const { errorHandler } = require("./middlewares/error-handler");
-
-const { errors } = require("celebrate");
 
 const { PORT = 3001 } = process.env;
 const app = express();
@@ -26,9 +26,9 @@ app.use(express.json());
 // });
 app.use(requestLogger);
 
-app.get('/crash-test', () => {
+app.get("/crash-test", () => {
   setTimeout(() => {
-    throw new Error('Server will crash now');
+    throw new Error("Server will crash now");
   }, 0);
 });
 

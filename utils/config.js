@@ -1,3 +1,4 @@
-const JWT_SECRET = "money-solves-everything-if-you-have-enough-of-it";
+const JWT_SECRET =
+  process.env.NODE_ENV === "production" ? process.env.JWT_SECRET : "default";
 
 module.exports = { JWT_SECRET };

@@ -1,4 +1,4 @@
-//const BAD_REQUEST = 400;
+// const BAD_REQUEST = 400;
 
 class BAD_REQUEST extends Error {
   constructor(message) {
@@ -7,7 +7,7 @@ class BAD_REQUEST extends Error {
   }
 }
 
-//const AUTHORIZATION_FAILURE = 401;
+// const AUTHORIZATION_FAILURE = 401;
 
 class AUTHORIZATION_FAILURE extends Error {
   constructor(message) {
@@ -16,7 +16,7 @@ class AUTHORIZATION_FAILURE extends Error {
   }
 }
 
-//const FORBIDDEN = 403;
+// const FORBIDDEN = 403;
 
 class FORBIDDEN extends Error {
   constructor(message) {
@@ -25,7 +25,7 @@ class FORBIDDEN extends Error {
   }
 }
 
-//const NOT_FOUND = 404;
+// const NOT_FOUND = 404;
 
 class NOT_FOUND extends Error {
   constructor(message) {
@@ -34,7 +34,7 @@ class NOT_FOUND extends Error {
   }
 }
 
-//const DUPLICATE_USER = 409;
+// const DUPLICATE_USER = 409;
 
 class DUPLICATE_USER extends Error {
   constructor(message) {
@@ -43,7 +43,12 @@ class DUPLICATE_USER extends Error {
   }
 }
 
-const DEFAULT = 500;
+class DEFAULT extends Error {
+  constructor(message) {
+    super(message);
+    this.statusCode = 500;
+  }
+}
 
 module.exports = {
   BAD_REQUEST,

@@ -9,18 +9,19 @@ const {
   likeClothingItem,
   unlikeClothingItem,
 } = require("../controllers/clothingItems");
+const { validateCardBody, validateId } = require("../middlewares/validation");
 
 // const testObject = { name: "bobete" };
 // res.send(testObject);
 
-router.post("/", auth, createClothingItems);
+router.post("/", validateCardBody, auth, createClothingItems);
 
 router.get("/", getClothingItems);
 
-router.put("/:itemId/likes", auth, likeClothingItem);
+router.put("/:itemId/likes", validateId, auth, likeClothingItem);
 
-router.delete("/:itemId/likes", auth, unlikeClothingItem);
+router.delete("/:itemId/likes", validateId, auth, unlikeClothingItem);
 
-router.delete("/:itemId", auth, deleteClothingItem);
+router.delete("/:itemId", validateId, auth, deleteClothingItem);
 
 module.exports = router;

@@ -7,7 +7,7 @@ const {
   FORBIDDEN,
 } = require("../utils/errors");
 
-const createClothingItems = (req, res) => {
+const createClothingItems = (req, res, next) => {
   console.log({ message: "Create an item" });
   console.log(req.body);
   const { name, weather, imageUrl } = req.body;
@@ -18,42 +18,37 @@ const createClothingItems = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        const error = new BAD_REQUEST(` Invalid Input `);
-
-        throw error;
+        next(new BAD_REQUEST(` Invalid Input `));
       } else if (err.name === "CastError") {
-        const error = new BAD_REQUEST("Invalid Params or ID");
-
-        throw error;
+        next(new BAD_REQUEST("Invalid Params or ID"));
       } else {
-        const error = new Error("Something Went Wrong");
-
-        throw error;
+        next(new DEFAULT("Something Went Wrong"));
       }
     });
 };
 
-const getClothingItems = (req, res) => {
+const getClothingItems = (req, res, next) => {
   console.log({ message: "get all items" });
   ClothingItem.find({})
     .then((clothingItems) => res.send({ data: clothingItems }))
-    .catch(() =>
-      res
-        .status(DEFAULT)
-        .send({ message: "Uncaught Error in getClothingItems" }),
+    .catch(
+      () => {
+        next(new DEFAULT("Something went wrong"));
+      },
+      // res
+      //   .status(DEFAULT)
+      //   .send({ message: "Uncaught Error in getClothingItems" }),
     );
 };
 
-const deleteClothingItem = (req, res) => {
+const deleteClothingItem = (req, res, next) => {
   console.log({ message: "delete item by ID" });
   console.log(req.params.itemId);
   const { _id } = req.user;
 
   ClothingItem.findById(req.params.itemId)
     .orFail(() => {
-      const error = new NOT_FOUND("Item not found");
-
-      throw error;
+      throw new NOT_FOUND("Item not found");
     })
     .then((item) => {
       if (String(item.owner) !== _id) {
@@ -65,9 +60,7 @@ const deleteClothingItem = (req, res) => {
       } else {
         ClothingItem.findByIdAndDelete(req.params.itemId)
           .orFail(() => {
-            const error = new NOT_FOUND("Item not found");
-
-            throw error;
+            throw new NOT_FOUND("Item not found");
           })
           .then((clothing) => res.send({ data: clothing }))
           .catch((err) => {
@@ -112,7 +105,7 @@ const deleteClothingItem = (req, res) => {
     });
 };
 
-const likeClothingItem = (req, res) => {
+const likeClothingItem = (req, res, next) => {
   console.log({ message: "like item by ID" });
   console.log(req.user._id);
   console.log(req.params.itemId);
@@ -122,9 +115,7 @@ const likeClothingItem = (req, res) => {
     { new: true },
   )
     .orFail(() => {
-      const error = new NOT_FOUND("Item not found");
-
-      throw error;
+      throw new NOT_FOUND("Item not found");
     })
     .then((item) => res.send({ data: item }))
     .catch((err) => {
@@ -148,7 +139,7 @@ const likeClothingItem = (req, res) => {
     });
 };
 
-const unlikeClothingItem = (req, res) => {
+const unlikeClothingItem = (req, res, next) => {
   console.log({ message: "unlike item by ID" });
   console.log(req.params.itemId);
   ClothingItem.findByIdAndUpdate(
@@ -157,9 +148,7 @@ const unlikeClothingItem = (req, res) => {
     { new: true },
   )
     .orFail(() => {
-      const error = new NOT_FOUND("Item not found");
-
-      throw error;
+      throw new NOT_FOUND("Item not found");
     })
     .then((item) => res.send({ data: item }))
     .catch((err) => {
