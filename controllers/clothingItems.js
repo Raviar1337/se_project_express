@@ -1,11 +1,15 @@
 const ClothingItem = require("../models/clothingItem");
+const { BAD_REQUEST } = require("../utils/BAD_REQUEST");
+const { DEFAULT } = require("../utils/DEFAULT");
+const { FORBIDDEN } = require("../utils/FORBIDDEN");
+const { NOT_FOUND } = require("../utils/NOT_FOUND");
 
-const {
-  BAD_REQUEST,
-  NOT_FOUND,
-  DEFAULT,
-  FORBIDDEN,
-} = require("../utils/errors");
+// const {
+//   BAD_REQUEST,
+//   NOT_FOUND,
+//   DEFAULT,
+//   FORBIDDEN,
+// } = require("../utils/errors");
 
 const createClothingItems = (req, res, next) => {
   console.log({ message: "Create an item" });

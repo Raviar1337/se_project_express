@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { getCurrentUser, patchCurrentUser } = require("../controllers/users");
-const { validateId } = require("../middlewares/validation");
+const { validateUserUpdate } = require("../middlewares/validation");
 
 // const testObject = { name: "bobete" };
 // res.send(testObject);
@@ -9,7 +9,7 @@ const { validateId } = require("../middlewares/validation");
 
 router.get("/me", getCurrentUser);
 
-router.patch("/me", validateId, patchCurrentUser);
+router.patch("/me", validateUserUpdate, patchCurrentUser);
 
 // router.get("/", getUsers);
 

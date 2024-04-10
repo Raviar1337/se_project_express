@@ -5,14 +5,18 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 
 const { JWT_SECRET } = require("../utils/config");
+const { BAD_REQUEST } = require("../utils/BAD_REQUEST");
+const { DUPLICATE_USER } = require("../utils/DUPLICATE_USER");
+const { DEFAULT } = require("../utils/DEFAULT");
+const { NOT_FOUND } = require("../utils/NOT_FOUND");
 
-const {
-  BAD_REQUEST,
-  NOT_FOUND,
-  DEFAULT,
+// const {
+//   BAD_REQUEST,
+//   NOT_FOUND,
+//   DEFAULT,
 
-  DUPLICATE_USER,
-} = require("../utils/errors");
+//   DUPLICATE_USER,
+// } = require("../utils/errors");
 
 const createUser = (req, res, next) => {
   console.log(req);
@@ -44,7 +48,6 @@ const createUser = (req, res, next) => {
         // res.status(DEFAULT).send({ message: ` Uncaughtr error in createUser` });
         next(new DEFAULT("something went wrong when creating user profile"));
       }
-      next(err);
     });
 };
 
@@ -74,7 +77,6 @@ const getCurrentUser = (req, res, next) => {
         //   .send({ message: "Uncaught Error in getCurrentUser" });
         next(new DEFAULT("Unknown error when getting user"));
       }
-      next(err);
     });
 };
 
@@ -114,7 +116,6 @@ const patchCurrentUser = (req, res, next) => {
         //   .send({ message: "Uncaught Error in patchCurrentUser" });
         next(new DEFAULT("Unkown Error occured while updating user"));
       }
-      next(err);
     });
 };
 

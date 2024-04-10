@@ -14,14 +14,14 @@ const { validateCardBody, validateId } = require("../middlewares/validation");
 // const testObject = { name: "bobete" };
 // res.send(testObject);
 
-router.post("/", validateCardBody, auth, createClothingItems);
+router.post("/", auth, validateCardBody, createClothingItems);
 
 router.get("/", getClothingItems);
 
-router.put("/:itemId/likes", validateId, auth, likeClothingItem);
+router.put("/:itemId/likes", auth, validateId, likeClothingItem);
 
-router.delete("/:itemId/likes", validateId, auth, unlikeClothingItem);
+router.delete("/:itemId/likes", auth, validateId, unlikeClothingItem);
 
-router.delete("/:itemId", validateId, auth, deleteClothingItem);
+router.delete("/:itemId", auth, validateId, deleteClothingItem);
 
 module.exports = router;
