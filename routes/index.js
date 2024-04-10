@@ -1,6 +1,6 @@
 const router = require("express").Router();
 
-const { NOT_FOUND } = require("../utils/errors");
+// const { NOT_FOUND } = require("../utils/errors");
 
 const { createUser, login } = require("../controllers/users");
 
@@ -12,6 +12,7 @@ const {
   validateLoginRequest,
   validateUserInfo,
 } = require("../middlewares/validation");
+const { NOT_FOUND } = require("../utils/NOT_FOUND");
 // const user = require("../models/user");
 
 router.post("/signin", validateLoginRequest, login);
